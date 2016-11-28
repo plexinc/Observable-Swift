@@ -13,7 +13,7 @@ open class OwningEventReference<T>: EventReference<T> {
     
     internal var owned: AnyObject? = nil
 
-    open override func add(_ subscription: SubscriptionType) -> SubscriptionType {
+    @discardableResult open override func add(_ subscription: SubscriptionType) -> SubscriptionType {
         let subscr = super.add(subscription)
         if owned != nil {
             subscr.addOwnedObject(self)
@@ -21,7 +21,7 @@ open class OwningEventReference<T>: EventReference<T> {
         return subscr
     }
     
-    open override func add(_ handler : @escaping (T) -> ()) -> EventSubscription<T> {
+    @discardableResult open override func add(_ handler : @escaping (T) -> ()) -> EventSubscription<T> {
         let subscr = super.add(handler)
         if owned != nil {
             subscr.addOwnedObject(self)
@@ -29,7 +29,7 @@ open class OwningEventReference<T>: EventReference<T> {
         return subscr
     }
     
-    open override func remove(_ subscription : SubscriptionType) {
+    @discardableResult open override func remove(_ subscription : SubscriptionType) {
         subscription.removeOwnedObject(self)
         return event.remove(subscription)
     }
@@ -41,7 +41,7 @@ open class OwningEventReference<T>: EventReference<T> {
         event.removeAll()
     }
     
-    open override func add(owner : AnyObject, _ handler : @escaping HandlerType) -> SubscriptionType {
+    @discardableResult open override func add(owner : AnyObject, _ handler : @escaping HandlerType) -> SubscriptionType {
         let subscr = event.add(owner: owner, handler)
         if owned != nil {
             subscr.addOwnedObject(self)

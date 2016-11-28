@@ -18,13 +18,13 @@ open class EventReference<T>: OwnableEvent {
         event.notify(value)
     }
     
-    open func add(_ subscription: SubscriptionType) -> SubscriptionType {
+    @discardableResult open func add(_ subscription: SubscriptionType) -> SubscriptionType {
         return event.add(subscription)
     }
     
-    open func add(_ handler : @escaping (T) -> ()) -> EventSubscription<T> {
+    @discardableResult open func add(_ handler : @escaping (T) -> ()) -> EventSubscription<T> {
         return event.add(handler)
-  }
+    }
 
     open func remove(_ subscription : SubscriptionType) {
         return event.remove(subscription)
@@ -34,7 +34,7 @@ open class EventReference<T>: OwnableEvent {
         event.removeAll()
     }
     
-    open func add(owner : AnyObject, _ handler : @escaping HandlerType) -> SubscriptionType {
+    @discardableResult open func add(owner : AnyObject, _ handler : @escaping HandlerType) -> SubscriptionType {
         return event.add(owner: owner, handler)
     }
     

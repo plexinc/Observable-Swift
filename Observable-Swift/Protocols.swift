@@ -15,10 +15,10 @@ public protocol AnyEvent {
   mutating func notify(_ value: ValueType)
 
   /// Add an existing subscription.
-  mutating func add(_ subscription: EventSubscription<ValueType>) -> EventSubscription<ValueType>
+  @discardableResult mutating func add(_ subscription: EventSubscription<ValueType>) -> EventSubscription<ValueType>
 
   /// Create, add and return a subscription for given handler.
-  mutating func add(_ handler: @escaping (ValueType) -> ()) -> EventSubscription<ValueType>
+  @discardableResult mutating func add(_ handler: @escaping (ValueType) -> ()) -> EventSubscription<ValueType>
 
   /// Remove given subscription, if present.
   mutating func remove(_ subscription : EventSubscription<ValueType>)
@@ -27,7 +27,7 @@ public protocol AnyEvent {
   mutating func removeAll()
 
   /// Create, add and return a subscription with given handler and owner.
-  mutating func add(owner: AnyObject, _ handler: @escaping (ValueType) -> ()) -> EventSubscription<ValueType>
+  @discardableResult mutating func add(owner: AnyObject, _ handler: @escaping (ValueType) -> ()) -> EventSubscription<ValueType>
 
 }
 
@@ -80,17 +80,17 @@ public func ^= <T : WritableObservable> (x: inout T, y: T.ValueType) {
 }
 
 // observable += { valuechange in ... }
-public func += <T : AnyObservable> (x: inout T, y: @escaping (ValueChange<T.ValueType>) -> ()) -> EventSubscription<ValueChange<T.ValueType>> {
+@discardableResult public func += <T : AnyObservable> (x: inout T, y: @escaping (ValueChange<T.ValueType>) -> ()) -> EventSubscription<ValueChange<T.ValueType>> {
   return x.afterChange += y
 }
 
 // observable += { (old, new) in ... }
-public func += <T : AnyObservable> (x: inout T, y: @escaping (T.ValueType, T.ValueType) -> ()) -> EventSubscription<ValueChange<T.ValueType>> {
+@discardableResult public func += <T : AnyObservable> (x: inout T, y: @escaping (T.ValueType, T.ValueType) -> ()) -> EventSubscription<ValueChange<T.ValueType>> {
   return x.afterChange += y
 }
 
 // observable += { new in ... }
-public func += <T : AnyObservable> (x: inout T, y: @escaping (T.ValueType) -> ()) -> EventSubscription<ValueChange<T.ValueType>> {
+@discardableResult public func += <T : AnyObservable> (x: inout T, y: @escaping (T.ValueType) -> ()) -> EventSubscription<ValueChange<T.ValueType>> {
   return x.afterChange += y
 }
 
@@ -100,12 +100,12 @@ public func -= <T : AnyObservable> (x: inout T, s: EventSubscription<ValueChange
 }
 
 // event += { (old, new) in ... }
-public func += <T> (event: EventReference<ValueChange<T>>, handler: @escaping (T, T) -> ()) -> EventSubscription<ValueChange<T>> {
+@discardableResult public func += <T> (event: EventReference<ValueChange<T>>, handler: @escaping (T, T) -> ()) -> EventSubscription<ValueChange<T>> {
   return event.add({ handler($0.oldValue, $0.newValue) })
 }
 
 // event += { new in ... }
-public func += <T> (event: EventReference<ValueChange<T>>, handler: @escaping (T) -> ()) -> EventSubscription<ValueChange<T>> {
+@discardableResult public func += <T> (event: EventReference<ValueChange<T>>, handler: @escaping (T) -> ()) -> EventSubscription<ValueChange<T>> {
   return event.add({ handler($0.newValue) })
 }
 
@@ -120,6 +120,6 @@ public func <- <T : WritableObservable & OwnableObservable> (x: T, y: T.ValueTyp
   z.value = y
 }
 
-public postfix func ^ <T : AnyObservable> (x: T) -> T.ValueType {
+@discardableResult public postfix func ^ <T : AnyObservable> (x: T) -> T.ValueType {
   return x.value
 }

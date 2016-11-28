@@ -28,12 +28,12 @@ public struct Event<T>: UnownableEvent {
     }
   }
 
-  public mutating func add(_ subscription: SubscriptionType) -> SubscriptionType {
+  @discardableResult public mutating func add(_ subscription: SubscriptionType) -> SubscriptionType {
     _subscriptions.append(subscription)
     return subscription
   }
 
-  public mutating func add(_ handler : @escaping HandlerType) -> SubscriptionType {
+  @discardableResult public mutating func add(_ handler : @escaping HandlerType) -> SubscriptionType {
     return add(SubscriptionType(owner: nil, handler: handler))
   }
 
@@ -54,7 +54,7 @@ public struct Event<T>: UnownableEvent {
     _subscriptions.removeAll()
   }
 
-  public mutating func add(owner : AnyObject, _ handler : @escaping HandlerType) -> SubscriptionType {
+  @discardableResult public mutating func add(owner : AnyObject, _ handler : @escaping HandlerType) -> SubscriptionType {
     return add(SubscriptionType(owner: owner, handler: handler))
   }
 
@@ -68,16 +68,16 @@ public struct Event<T>: UnownableEvent {
   return event.add(handler)
 }*/
 
-public func += <T: OwnableEvent> (event: T, handler: @escaping (T.ValueType) -> ()) -> EventSubscription<T.ValueType> {
+@discardableResult public func += <T: OwnableEvent> (event: T, handler: @escaping (T.ValueType) -> ()) -> EventSubscription<T.ValueType> {
   var e: T = event
   return e.add(handler)
 }
 
-public  func -= <T: UnownableEvent> (event: inout T, subscription: EventSubscription<T.ValueType>) {
+@discardableResult public  func -= <T: UnownableEvent> (event: inout T, subscription: EventSubscription<T.ValueType>) {
   return event.remove(subscription)
 }
 
-public func -= <T: OwnableEvent> (event: T, subscription: EventSubscription<T.ValueType>) {
+@discardableResult public func -= <T: OwnableEvent> (event: T, subscription: EventSubscription<T.ValueType>) {
   var e = event
   return e.remove(subscription)
 }
